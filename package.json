@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "firebase": "^11.0.1",
+    "oh-vue-icons": "^1.0.0-rc3",
+    "vue-router": "^4.4.5",
+    "vuetify": "^3.7.4",
+    "vuex": "^4.0.2"
+  }
+}
