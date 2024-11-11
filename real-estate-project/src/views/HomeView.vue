@@ -38,7 +38,7 @@ export default {
   name: 'HomeView',
   methods: {
     navigateToOffers() {
-      this.$router.push({ name: 'OffersView' });
+      this.$router.push({ name: 'offers' });
     }
   }
 }

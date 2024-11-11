@@ -3,7 +3,12 @@
     <v-row>
       <v-col cols="12">
         <h1>Деталі продукту</h1>
-        <div class="product-details" v-if="product">
+        <v-progress-circular
+          v-if="loading"
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
+        <div class="product-details" v-if="!loading && product">
           <img :src="product.imgSrc" class="product-image" alt="Image not found">
           <h2>{{ product.description }}</h2>
           <p><strong>Район:</strong> {{ product.district }}</p>
@@ -13,7 +18,7 @@
           <p><strong>Площа:</strong> {{ product.square_meters }} м²</p>
           <p><strong>Вулиця:</strong> {{ product.street }}</p>
         </div>
-        <v-alert v-else type="error">Продукт не знайдено</v-alert>
+        <v-alert v-else-if="!loading && !product" type="error">Продукт не знайдено</v-alert>
       </v-col>
     </v-row>
   </v-container>
@@ -21,41 +26,41 @@
 
 <script>
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { doc, getDoc } from 'firebase/firestore'; 
 import firebaseDB from '@/firebase-config'; 
 
 export default {
   name: 'ProductDetails',
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
+  setup() {
+    const route = useRoute();
     const product = ref(null);
+    const loading = ref(true);
     const error = ref(null);
 
-    onMounted(() => {
-      console.log('Fetching product details for ID:', props.id); 
-      const docRef = doc(firebaseDB, 'productData', props.id); 
+    onMounted(async () => {
+      try {
+        const productId = route.params.id;
+        console.log('Fetching product details for ID:', productId); 
+        const docRef = doc(firebaseDB, 'productData', productId); 
+        const docSnap = await getDoc(docRef);
 
-      getDoc(docRef).then((docSnap) => {
         if (docSnap.exists()) {
-          product.value = docSnap.data();
-          product.value.id = docSnap.id; 
+          product.value = { id: docSnap.id, ...docSnap.data() };
           console.log('Product Data:', product.value); 
         } else {
           error.value = 'Продукт не знайдено';
           console.error('No such document!');
         }
-      }).catch((err) => {
+      } catch (err) {
         error.value = err.message;
         console.error('Error fetching document:', err);
-      });
+      } finally {
+        loading.value = false;
+      }
     });
 
-    return { product, error };
+    return { product, loading, error };
   }
 }
 </script>
