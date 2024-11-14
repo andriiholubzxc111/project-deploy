@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <v-spacer>
     <v-app-bar app color="primary" dark>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
       <v-toolbar-title>Агенство Нерухомості</v-toolbar-title>
@@ -8,6 +9,7 @@
       <router-link to="/offers" class="nav-link">Пропозиції</router-link>
       <router-link to="/sell" class="nav-link">Продати</router-link>
       <router-link to="/contact" class="nav-link">Контакти</router-link>
+      </v-spacer>
     </v-app-bar>
     
     <v-main>
